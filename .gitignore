@@ -1,0 +1,33 @@
+# Build and release output
+/build/
+/out/
+/dist/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+*.exe
+*.dll
+*.lib
+*.exp
+*.obj
+*.pdb
+
+# IDE and editor state
+/.vs/
+/.vscode/
+/.idea/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+
+# Local tooling and operating-system files
+/.codex/
+/.agents/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+*.tmp

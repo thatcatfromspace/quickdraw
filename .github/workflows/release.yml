@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake --preset windows-msvc
+
+      - name: Build
+        run: cmake --build --preset windows-release
+
+      - name: Test
+        run: ctest --test-dir build/windows-msvc -C Release --output-on-failure
+
+      - name: Prepare release files
+        shell: pwsh
+        run: |
+          $Version = "${{ github.ref_name }}" -replace '^v', ''
+          $PackageName = "Quickdraw-$Version-win-x64"
+          New-Item dist -ItemType Directory -Force | Out-Null
+          New-Item "dist/$PackageName" -ItemType Directory -Force | Out-Null
+          Copy-Item build/windows-msvc/Release/Quickdraw.exe dist/Quickdraw.exe
+          Copy-Item dist/Quickdraw.exe "dist/$PackageName/Quickdraw.exe"
+          Copy-Item README.md "dist/$PackageName/README.md"
+          Copy-Item LICENSE "dist/$PackageName/LICENSE"
+          Compress-Archive -Path "dist/$PackageName/*" -DestinationPath "dist/$PackageName.zip"
+          $ExeHash = (Get-FileHash dist/Quickdraw.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$ExeHash  Quickdraw.exe" | Set-Content dist/Quickdraw.exe.sha256 -Encoding ascii
+          $ZipHash = (Get-FileHash "dist/$PackageName.zip" -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$ZipHash  $PackageName.zip" | Set-Content "dist/$PackageName.zip.sha256" -Encoding ascii
+
+      - name: Publish GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $Version = "${{ github.ref_name }}" -replace '^v', ''
+          $Archive = "dist/Quickdraw-$Version-win-x64.zip"
+          gh release create "${{ github.ref_name }}" `
+            dist/Quickdraw.exe `
+            dist/Quickdraw.exe.sha256 `
+            $Archive `
+            "$Archive.sha256" `
+            --verify-tag `
+            --generate-notes `
+            --title "Quickdraw ${{ github.ref_name }}"

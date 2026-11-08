@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Windows x64
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake --preset windows-msvc
+
+      - name: Build
+        run: cmake --build --preset windows-release
+
+      - name: Test
+        run: ctest --test-dir build/windows-msvc -C Release --output-on-failure
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: Quickdraw-windows-x64
+          path: build/windows-msvc/Release/Quickdraw.exe
+          if-no-files-found: error
