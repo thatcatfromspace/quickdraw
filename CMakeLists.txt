@@ -70,6 +70,7 @@ if(MSVC)
         /guard:cf
     )
     target_link_options(Quickdraw PRIVATE
+        /MANIFEST:NO
         /DYNAMICBASE
         /NXCOMPAT
         /HIGHENTROPYVA
