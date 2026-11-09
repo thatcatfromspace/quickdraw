@@ -264,10 +264,10 @@ void AppController::ShowTrayMenu(POINT anchor) {
             L"A lightweight resolution and refresh-rate switcher.",
             L"About Quickdraw",
             MB_OK | MB_ICONINFORMATION);
-    } else if (const TrayMenuModeAction* action = menu.FindModeAction(command)) {
-        ApplyDisplayMode(*action);
-    } else if (const TrayMenuPresetAction* action = menu.FindPresetAction(command)) {
-        ApplyPreset(action->presetId);
+    } else if (const TrayMenuModeAction* modeAction = menu.FindModeAction(command)) {
+        ApplyDisplayMode(*modeAction);
+    } else if (const TrayMenuPresetAction* presetAction = menu.FindPresetAction(command)) {
+        ApplyPreset(presetAction->presetId);
     }
 }
 
