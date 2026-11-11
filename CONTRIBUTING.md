@@ -27,6 +27,16 @@ ctest --test-dir build/windows-msvc -C Release --output-on-failure
 
 For changes that affect display switching, complete the relevant checks in [docs/windows-test-matrix.md](docs/windows-test-matrix.md).
 
+Installer changes also require Inno Setup 6 or 7. Build and exercise the full
+install, upgrade, startup, and uninstall lifecycle with:
+
+```powershell
+./scripts/build-release.ps1
+```
+
+The installer contract and unattended switches are documented in
+[docs/installer.md](docs/installer.md).
+
 ## Pull requests
 
 - Keep each pull request focused on one change.

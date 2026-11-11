@@ -7,9 +7,9 @@
 <p align="center">Switch monitor resolution and refresh rate from the Windows tray.</p>
 
 <p align="center">
-  <a href="https://github.com/thatcatfromspace/quickdraw/releases/latest/download/Quickdraw.exe"><strong>Download Quickdraw.exe</strong></a>
+  <a href="https://github.com/thatcatfromspace/quickdraw/releases/latest"><strong>Download the installer</strong></a>
   ·
-  <a href="https://github.com/thatcatfromspace/quickdraw/releases/latest">Release notes</a>
+  <a href="https://github.com/thatcatfromspace/quickdraw/releases/latest/download/Quickdraw.exe">Portable version</a>
 </p>
 
 <p align="center">
@@ -22,9 +22,11 @@ Quickdraw is a small native Windows utility for people who change display modes 
 
 ## Download
 
-Download [`Quickdraw.exe`](https://github.com/thatcatfromspace/quickdraw/releases/latest/download/Quickdraw.exe) from the latest GitHub Release and run it. Quickdraw is portable, so there is no installer. Move the executable wherever you want to keep it.
+Open the [latest GitHub Release](https://github.com/thatcatfromspace/quickdraw/releases/latest) and download `Quickdraw-Setup-<version>.exe`. The wizard adds Quickdraw to the Start menu and can launch it when you sign in. Installation stays within your Windows account and does not request administrator access.
 
-The current release is unsigned. Windows SmartScreen may show an **Unrecognized app** warning on first launch. Check the release checksum if you want to verify the download before running it.
+Prefer a standalone file? Download [`Quickdraw.exe`](https://github.com/thatcatfromspace/quickdraw/releases/latest/download/Quickdraw.exe) and place it wherever you keep portable apps.
+
+The current installer and executable are unsigned. Windows SmartScreen may show an **Unrecognized app** warning on first launch. Each release includes SHA-256 checksums for download verification.
 
 ## Pick a mode in seconds
 
@@ -77,6 +79,8 @@ To create a versioned ZIP and SHA-256 checksum under `out`, run:
 ```powershell
 ./scripts/build-release.ps1
 ```
+
+The release script also builds and tests the per-user installer. Install Inno Setup 6 or 7 before running it. Installer behavior and unattended deployment options are documented in [docs/installer.md](docs/installer.md).
 
 ## Local data and privacy
 

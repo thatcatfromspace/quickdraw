@@ -17,6 +17,27 @@ every test session.
 - Open the tray menu while disconnecting a monitor and verify that the stale menu
   closes without applying an action.
 
+## Installer lifecycle
+
+- Launch the installer interactively and confirm that one wizard opens. After a
+  SmartScreen **Run anyway** choice, confirm that Setup does not relaunch itself.
+- Confirm that installation stays within the current user account and does not
+  request administrator privileges.
+- Confirm that the Start menu shortcut is created and the desktop shortcut is
+  created only when selected.
+- Leave **Start Quickdraw when I sign in** unchecked and verify that no startup
+  value is created.
+- Select **Start Quickdraw when I sign in** and verify that it matches the
+  in-app setting.
+- Upgrade an existing installation and confirm that the current startup choice
+  is retained.
+- Uninstall and confirm that installed files, shortcuts, and Apps & features
+  registration are removed.
+- Confirm that uninstall preserves `%LOCALAPPDATA%\Quickdraw` and a startup entry
+  redirected to a separate portable copy.
+- Run `./scripts/test-installer.ps1` against the release installer and confirm
+  that the automated lifecycle passes without visible security prompts.
+
 ## Display inventory
 
 - One internal laptop display.

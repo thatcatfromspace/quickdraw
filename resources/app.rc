@@ -6,8 +6,8 @@ IDR_APP_MANIFEST RT_MANIFEST "app.manifest"
 IDI_APP_ICON ICON "quickdraw.ico"
 
 IDR_VERSION_INFO VERSIONINFO
-FILEVERSION 1,0,0,0
-PRODUCTVERSION 1,0,0,0
+FILEVERSION 1,1,0,0
+PRODUCTVERSION 1,1,0,0
 FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
 FILEFLAGS VS_FF_DEBUG
@@ -24,11 +24,11 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Quickdraw"
             VALUE "FileDescription", "Quickdraw monitor mode switcher"
-            VALUE "FileVersion", "1.0.0.0"
+            VALUE "FileVersion", "1.1.0.0"
             VALUE "InternalName", "Quickdraw"
             VALUE "OriginalFilename", "Quickdraw.exe"
             VALUE "ProductName", "Quickdraw"
-            VALUE "ProductVersion", "1.0.0.0"
+            VALUE "ProductVersion", "1.1.0.0"
         END
     END
     BLOCK "VarFileInfo"

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 
 cmake_policy(SET CMP0091 NEW)
 
-project(Quickdraw VERSION 1.0.0 LANGUAGES CXX RC)
+project(Quickdraw VERSION 1.1.0 LANGUAGES CXX RC)
 
 add_executable(Quickdraw WIN32
     src/main.cpp

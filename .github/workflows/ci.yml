@@ -27,9 +27,39 @@ jobs:
       - name: Test
         run: ctest --test-dir build/windows-msvc -C Release --output-on-failure
 
-      - name: Upload executable
+      - name: Read project version
+        id: version
+        shell: pwsh
+        run: |
+          $ProjectLine = Select-String CMakeLists.txt -Pattern 'project\(Quickdraw VERSION ([0-9]+\.[0-9]+\.[0-9]+)'
+          if ($null -eq $ProjectLine) {
+            throw "Could not read the Quickdraw version from CMakeLists.txt."
+          }
+          "value=$($ProjectLine.Matches[0].Groups[1].Value)" >> $env:GITHUB_OUTPUT
+
+      - name: Build installer
+        shell: pwsh
+        run: >-
+          ./scripts/build-installer.ps1
+          -Version "${{ steps.version.outputs.value }}"
+          -ExecutablePath build/windows-msvc/Release/Quickdraw.exe
+          -OutputDirectory dist
+
+      - name: Test installer lifecycle
+        shell: pwsh
+        run: >-
+          ./scripts/test-installer.ps1
+          -InstallerPath "dist/Quickdraw-Setup-${{ steps.version.outputs.value }}.exe"
+
+      - name: Stage portable executable
+        shell: pwsh
+        run: Copy-Item build/windows-msvc/Release/Quickdraw.exe dist/Quickdraw.exe
+
+      - name: Upload Windows artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: Quickdraw-windows-x64
-          path: build/windows-msvc/Release/Quickdraw.exe
+          name: Quickdraw-${{ steps.version.outputs.value }}-windows-x64
+          path: |
+            dist/Quickdraw.exe
+            dist/Quickdraw-Setup-${{ steps.version.outputs.value }}.exe
           if-no-files-found: error

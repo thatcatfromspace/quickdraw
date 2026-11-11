@@ -260,7 +260,7 @@ void AppController::ShowTrayMenu(POINT anchor) {
     } else if (command == TrayMenu::kAboutCommand) {
         MessageBoxW(
             window_,
-            L"Quickdraw 1.0.0\n\nDisplay modes in a click.\n\n"
+            L"Quickdraw 1.1.0\n\nDisplay modes in a click.\n\n"
             L"A lightweight resolution and refresh-rate switcher.",
             L"About Quickdraw",
             MB_OK | MB_ICONINFORMATION);

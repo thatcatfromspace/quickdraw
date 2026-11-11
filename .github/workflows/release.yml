@@ -26,10 +26,38 @@ jobs:
       - name: Test
         run: ctest --test-dir build/windows-msvc -C Release --output-on-failure
 
+      - name: Validate release version
+        shell: pwsh
+        run: |
+          $TagVersion = "${{ github.ref_name }}" -replace '^v', ''
+          $ProjectLine = Select-String CMakeLists.txt -Pattern 'project\(Quickdraw VERSION ([0-9]+\.[0-9]+\.[0-9]+)'
+          if ($null -eq $ProjectLine) {
+            throw "Could not read the Quickdraw version from CMakeLists.txt."
+          }
+          $ProjectVersion = $ProjectLine.Matches[0].Groups[1].Value
+          if ($ProjectVersion -ne $TagVersion) {
+            throw "Release tag version $TagVersion does not match project version $ProjectVersion."
+          }
+          "QUICKDRAW_VERSION=$TagVersion" >> $env:GITHUB_ENV
+
+      - name: Build installer
+        shell: pwsh
+        run: >-
+          ./scripts/build-installer.ps1
+          -Version "$env:QUICKDRAW_VERSION"
+          -ExecutablePath build/windows-msvc/Release/Quickdraw.exe
+          -OutputDirectory dist
+
+      - name: Test installer lifecycle
+        shell: pwsh
+        run: >-
+          ./scripts/test-installer.ps1
+          -InstallerPath "dist/Quickdraw-Setup-$($env:QUICKDRAW_VERSION).exe"
+
       - name: Prepare release files
         shell: pwsh
         run: |
-          $Version = "${{ github.ref_name }}" -replace '^v', ''
+          $Version = $env:QUICKDRAW_VERSION
           $PackageName = "Quickdraw-$Version-win-x64"
           New-Item dist -ItemType Directory -Force | Out-Null
           New-Item "dist/$PackageName" -ItemType Directory -Force | Out-Null
@@ -42,6 +70,9 @@ jobs:
           "$ExeHash  Quickdraw.exe" | Set-Content dist/Quickdraw.exe.sha256 -Encoding ascii
           $ZipHash = (Get-FileHash "dist/$PackageName.zip" -Algorithm SHA256).Hash.ToLowerInvariant()
           "$ZipHash  $PackageName.zip" | Set-Content "dist/$PackageName.zip.sha256" -Encoding ascii
+          $SetupName = "Quickdraw-Setup-$Version.exe"
+          $SetupHash = (Get-FileHash "dist/$SetupName" -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$SetupHash  $SetupName" | Set-Content "dist/$SetupName.sha256" -Encoding ascii
 
       - name: Publish GitHub Release
         shell: pwsh
@@ -50,9 +81,12 @@ jobs:
         run: |
           $Version = "${{ github.ref_name }}" -replace '^v', ''
           $Archive = "dist/Quickdraw-$Version-win-x64.zip"
+          $Installer = "dist/Quickdraw-Setup-$Version.exe"
           gh release view "${{ github.ref_name }}" --json tagName *> $null
           if ($LASTEXITCODE -eq 0) {
             gh release upload "${{ github.ref_name }}" `
+              $Installer `
+              "$Installer.sha256" `
               dist/Quickdraw.exe `
               dist/Quickdraw.exe.sha256 `
               $Archive `
@@ -60,6 +94,8 @@ jobs:
               --clobber
           } else {
             gh release create "${{ github.ref_name }}" `
+              $Installer `
+              "$Installer.sha256" `
               dist/Quickdraw.exe `
               dist/Quickdraw.exe.sha256 `
               $Archive `
